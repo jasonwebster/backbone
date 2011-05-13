@@ -342,7 +342,9 @@
 
     // **parse** converts a response into the hash of attributes to be `set` on
     // the model. The default implementation is just to pass the response along.
-    parse : function(resp, xhr) {
+    parse: function(resp) {
+      if(resp && this._class && resp[this._class])
+        return resp[this._class];
       return resp;
     },
 
