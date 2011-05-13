@@ -311,8 +311,9 @@
       var model = this;
       var success = options.success;
       options.success = function(resp) {
-        model.trigger('destroyed', model, model.collection, options); 
+        model.trigger('destroyed', model, model.collection, options);
         if (success) success(model, resp);
+        model.unbind();
       };
       options.error = wrapError(options.error, model, options);
       model.trigger('destroy', model, model.collection, options);
