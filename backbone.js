@@ -202,6 +202,7 @@
     // Set a hash of model attributes on the object, firing `"change"` unless you
     // choose to silence it.
     set : function(attrs, options) {
+      attrs = this.parse(attrs); // Jason: I added this.
 
       // Extract attributes and options.
       options || (options = {});
@@ -217,9 +218,9 @@
 
       // Update attributes.
       for (var attr in attrs) {
-        var val = attrs[attr];
+        var val = this['_filter_' + attr]? this['_filter_' + attr](attrs[attr]) : attrs[attr]; // Jason: I added this
         if (!_.isEqual(now[attr], val)) {
-          now[attr] = val;
+          this['_set_' + attr]? this['_set_' + attr](val) : now[attr] = val; // Jason: I added this
           delete escaped[attr];
           this._changed = true;
           if (!options.silent) this.trigger('change:' + attr, this, val, options);
