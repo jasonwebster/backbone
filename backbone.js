@@ -289,13 +289,18 @@
       options || (options = {});
       if (attrs && !this.set(attrs, options)) return false;
       var model = this;
+      var method = this.isNew() ? 'create' : 'update';
       var success = options.success;
       options.success = function(resp, status, xhr) {
         if (!model.set(model.parse(resp, xhr), options)) return false;
         if (success) success(model, resp, xhr);
+        model.trigger('saved', model);
+        model.trigger(method + 'd', model);
       };
       options.error = wrapError(options.error, model, options);
-      var method = this.isNew() ? 'create' : 'update';
+      
+      model.trigger('save', model); 
+      model.trigger(method, model);
       return (this.sync || Backbone.sync).call(this, method, this, options);
     },
 
@@ -306,10 +311,11 @@
       var model = this;
       var success = options.success;
       options.success = function(resp) {
-        model.trigger('destroy', model, model.collection, options);
+        model.trigger('destroyed', model, model.collection, options); 
         if (success) success(model, resp);
       };
       options.error = wrapError(options.error, model, options);
+      model.trigger('destroy', model, model.collection, options);
       return (this.sync || Backbone.sync).call(this, 'delete', this, options);
     },
 
