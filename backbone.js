@@ -985,6 +985,8 @@
 
   // Backbone.sync
   // -------------
+  
+  var runningRequests = {};
 
   // Override this function to change the manner in which Backbone persists
   // models to the server. You will be passed the type of request, and the
@@ -1002,6 +1004,11 @@
   // Useful when interfacing with server-side languages like **PHP** that make
   // it difficult to read the body of `PUT` requests.
   Backbone.sync = function(method, model, options) {
+    var requestKey = model._class? method + '-' + model._class + '-' + (model.id || model.cid) : false;
+    if(requestKey && runningRequests[requestKey]) {
+      runningRequests[requestKey].abort();
+    }
+    
     var type = methodMap[method];
 
     // Default JSON-request options.
@@ -1042,7 +1049,14 @@
     }
 
     // Make the request.
-    return $.ajax(params);
+    var req = $.ajax(params);
+    if(requestKey) {
+      runningRequests[requestKey] = req;
+      req.complete(function(){
+        delete runningRequests[requestKey];
+      });
+    }
+    return req;
   };
 
   // Helpers
