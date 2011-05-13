@@ -134,7 +134,7 @@
     attributes || (attributes = {});
     if (defaults = this.defaults) {
       if (_.isFunction(defaults)) defaults = defaults();
-      attributes = _.extend({}, defaults, attributes);
+      attributes = _.extend({}, defaults, attributes[this._class] || attributes);
     }
     this.attributes = {};
     this._escapedAttributes = {};
