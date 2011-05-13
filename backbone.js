@@ -1019,7 +1019,7 @@
     // Ensure that we have the appropriate request data.
     if (!params.data && model && (method == 'create' || method == 'update')) {
       params.contentType = 'application/json';
-      params.data = JSON.stringify(model.toJSON());
+      params.data = JSON.stringify(model.toJSON()).replace(/\\u000a/g, "\\n");
     }
 
     // For older servers, emulate JSON by encoding the request into an HTML-form.
