@@ -166,6 +166,17 @@
 
     // Return a copy of the model's `attributes` object.
     toJSON : function() {
+      if(this._class) {
+        var obj = { };
+        if (this.id != null)
+          obj.id = this.id;
+
+        var attrs = _.clone(this.attributes);
+        obj[this._class] = attrs;
+
+        return obj;
+      }
+
       return _.clone(this.attributes);
     },
 
